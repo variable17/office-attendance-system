@@ -14,9 +14,9 @@ Implement an ofiice attendance system which uses mobile no to check in for the u
 The normal sesssion would not work as the details resides at the user browser and to access it User have to be online.
 So i opt for Server side session storage. I implemented it using flask-kvsession package.
 
-	## Flask-KVSession - 
-	Session implementation configuration - 
-	```	
+## Flask-KVSession - 
+Session implementation configuration - 
+		```	
 		import redis
 		from flask_kvsession import KVSessionExtension
 		from simplekv.memory.redisstore import RedisStore
@@ -24,24 +24,25 @@ So i opt for Server side session storage. I implemented it using flask-kvsession
 		st = RedisStore(redis.StrictRedis())
 
 		KVSessionExtension(st, app)
-  ```
+  		```
 
-	Whenever you log in, a session key is sent to user and key-value pair is then stored at the server side.
-	You can access the key using this - 
+Whenever you log in, a session key is sent to user and key-value pair is then stored at the server side.
+You can access the key using this - 
+	
 		```
-    cookie_val = request.cookies.get('session').split(".")[0]
-    ```
-	and key's value can be checked using this - 
-  ```
-		st.get(cookie_val)
-  ```
+		cookie_val = request.cookies.get('session').split(".")[0]
+		```
+and key's value can be checked using this - 
+		```
+		 st.get(cookie_val) 
+		```
   
 Now i can check using the key that whether the session has ended or not. Storing the key in database in the user table so that i can use it to access the session for any user at any given time.
 The settings to set the session persist even after the user have closed the browser-
-  ```
+	```
 	PERMANENT_SESSION_LIFETIME = session_time()
 	SESSION_PERMANENT = True
-  ```
+  	```
   
 	Don't worry about the session time function, we will see what it does in next paragraph.
 
@@ -52,15 +53,14 @@ The session expires at 9pm and all of them get logged out automatically. To make
 	y, m, d = [int(i) for i in str(date.today()).split('-')]
 	t = datetime(y,m,d,21,0,0,0)
 	return t - a
-  ```
-	a is taking the current time when you log in and t is the value of datetime of at 9pm.
-	The return value here is a timedelta object which is being used for PERMANENT_SESSION_LIFETIME.
+ 	```
+a is taking the current time when you log in and t is the value of datetime of at 9pm.
+The return value here is a timedelta object which is being used for PERMANENT_SESSION_LIFETIME.
 
 ## Login Implementation - 
-	### For Normal User - 
-
-		When user checks in- 
-      ```
+### For Normal User - 
+When user checks in- 
+     			 ```
 			login_user(user)
 			cookie_val = request.cookies.get('session').split(".")[0]
 			user.cookie = cookie_val
@@ -68,16 +68,15 @@ The session expires at 9pm and all of them get logged out automatically. To make
 			db.session.add(user)
 			db.session.commit()
 			flash('You are checked In, Now.')
-      ```
-		User get logged in and a check_in value get stored in the database along with session-id which is coockie_value. A user can't log in again because route checks to see that if for the user value exists in session.
+      			```
+User get logged in and a check_in value get stored in the database along with session-id which is coockie_value. A user can't log in again because route checks to see that if for the user value exists in session.
 			```
-      st.get(user.cookie)
+      			st.get(user.cookie)
 			flash('Already logged In')
-      ```
-	### For admin and user - 
-
-		Since they can login and logout multiple time, the check in time was an important factor to check when they first logged in. To take care of that -
-      ```
+      			```
+### For admin and user - 
+Since they can login and logout multiple time, the check in time was an important factor to check when they first logged in. To take care of that -
+		      ```
 			try:
 				st.get(user.cookie)
 			except:
@@ -85,14 +84,14 @@ The session expires at 9pm and all of them get logged out automatically. To make
 			user.cookie = cookie_val
 			db.session.add(user)
 			db.session.commit() 
-      ```
+      			```
       
-		Only if the session is expired, then the time gets set.
+Only if the session is expired, then the time gets set.
 
 ## Attendance and New user - 
-	### Manager - 
-		  He can only check the attendance so the implementation is this - 
-		  ```	
+### Manager - 
+ He can only check the attendance so the implementation is this - 
+		  	```	
 			@main.route('/attendance', methods=['GET'])
 			@is_manager
 			def attendance():
@@ -110,29 +109,28 @@ The session expires at 9pm and all of them get logged out automatically. To make
 						value = 'checked In, Working'
 						check_in = user.check_in
 					phone_no = user.phone_no
-
 					b = [name, value, check_in[:-10], phone_no ]
 					a.append(b)
 				return render_template('attendance.html', users=a)
-      ```
+      			```
       
-		To show the attendance, all the users status gets stored in the list and passed to the html template. Only manager or admin can see this. As admin is manager too.
+To show the attendance, all the users status gets stored in the list and passed to the html template. Only manager or admin can see this. As admin is manager too.
 
-	### Admin - 
-		  Apart from attendace, admin can create new users too. The implementation is - 
-			```
-      @main.route('/new_user', methods=['GET', 'POST'])
-			@is_admin
-			def new_user():
-				form = RegistrationForm()
-				if form.validate_on_submit():
-					user = User(username=form.username.data, password=form.password.data, phone_no=form.phone_no.data, admin=form.admin.data, manager=form.manager.data)
-					db.session.add(user)
-					db.session.commit()
-					flash('New user has been created')
-					return redirect(url_for('.office'))
-				return render_template('register.html', form=form)
-       ```
+### Admin - 
+ Apart from attendace, admin can create new users too. The implementation is - 
+	      ```
+	      @main.route('/new_user', methods=['GET', 'POST'])
+				@is_admin
+				def new_user():
+					form = RegistrationForm()
+					if form.validate_on_submit():
+						user = User(username=form.username.data, password=form.password.data, phone_no=form.phone_no.data, admin=form.admin.data, manager=form.manager.data)
+						db.session.add(user)
+						db.session.commit()
+						flash('New user has been created')
+						return redirect(url_for('.office'))
+					return render_template('register.html', form=form)
+	       ```
 
 # Limitation - 
 1. I have assumed that no user logs in between 9pm to 12pm.
