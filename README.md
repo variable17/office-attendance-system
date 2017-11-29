@@ -6,15 +6,15 @@ automatically.
 
 ## User Level - 
 
-1. Normal User - He can only check in using his mobile no. He can not log out, only way he got logged out is when session expires.
-2. Manager - He have to check in using the login and password. The manager has one more benefit, he can access the attendance sheet
-i.e. who is present and when they checked in. Using the normal check in for manager is banned, because people knowing the manager no
+1. Normal User - He can only check in using his mobile no. He can not log out, only way he gets logged out is when session expires.
+2. Manager - He has to check in using the login and password. The manager has one more benefit, he can access the attendance sheet
+i.e. who is present and when they checked in. Using the normal check in for manager is banned, because people knowing the manager no.
 can check the attendance. He can log out any time. 
-3. Admin - The extra thing that admin gets with all the functionality of manager is that he can create the user of any level.
+3. Admin - The extra feature that admin gets with all the functionality of manager is that he can create the user of any level.
 
 # Implementation details - 
 
-The normal sesssion would not work as the details resides at the user browser and to access it User have to be online.
+The normal sesssion would not work as the details resides at the browser side and to access it User must to be online.
 So i opt for Server side session storage. I implemented it using flask-kvsession package.
 
 ### Flask-KVSession - 
@@ -41,7 +41,7 @@ st.get(cookie_val)
 Now i can check using the key that whether the session has ended or not. Storing the key in database in the user table so that i can
 use it to access the session for any user at any given time.
 
-The settings to set the session persist even after the user have closed the browser-
+The settings to make the session persist even after the user have closed the browser-
 ```
 PERMANENT_SESSION_LIFETIME = session_time()
 SESSION_PERMANENT = True
@@ -57,7 +57,7 @@ def session_time():
 	t = datetime(y,m,d,21,0,0,0)
 	return t - a
 ```
-a is taking the current time when you log in and t is the value of datetime of at 9pm.
+a is taking the current time when someone log in and t is the value of datetime of at 9pm on a given date.
 The return value here is a timedelta object which is being used for ```PERMANENT_SESSION_LIFETIME```.
 
 ### Login Implementation - 
@@ -72,8 +72,8 @@ db.session.add(user)
 db.session.commit()
 flash('You are checked In, Now.')
 ```
-User get logged in and a check_in value get stored in the database along with session-id which is coockie_value. A user can't log in
-again because route checks to see that if for the user value exists in session.
+User gets logged in and a check_in value get stored in the database along with session-id which is coockie_value. A user can't log in
+again because route checks to see that if for the user's cookie_value's value exists in session.
 ```
 st.get(user.cookie)
 flash('Already logged In')
@@ -90,7 +90,7 @@ user.cookie = cookie_val
 db.session.add(user)
 db.session.commit() 
 ```
-Only if the session is expired, then the time gets set.
+Only if the session is expired and they log back in, then the time gets set.
 
 ### Attendance and New user - 
 #### Manager - 
