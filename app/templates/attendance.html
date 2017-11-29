@@ -1,0 +1,36 @@
+{% extends 'base.html'%}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('static', filename='mystyle.css')}}">
+{% endblock %}
+
+{% block page_content %}
+
+
+<div class="container table-container"> 
+
+<h3>Table for availability</h3>
+<hr>
+
+<table style="width:100%; padding-top:30%; margin-top: 40px;", class="table-striped">
+        <tr>
+          <th>Name</th>
+          <th>Availability</th>
+          <th>Check In Time</th>
+          <th>Phone</th>
+        </tr>
+      {% for user in users %}
+        <tr>
+          <td>{{ user[0] }}</td>
+          <td>{{ user[1] }}</td> 
+          
+          <td>{{ user[2] }}</td>
+          <td>{{ user[3] }}</td>
+        </tr>
+      {% endfor %}
+</table>
+
+</div>
+{% endblock %}

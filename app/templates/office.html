@@ -1,0 +1,23 @@
+{% extends 'base.html'%}
+
+{% block page_content %}
+
+
+<div class="align">
+	{% if admin %}
+		<a href="{{ url_for('main.new_user') }}">
+			<button type="button" class="btn btn-info btn-lg btn-block">New User</button>
+		</a>
+	{% endif %}
+		<a href="{{ url_for('main.attendance') }}">
+			<button type="button" class="btn btn-info btn-lg btn-block">Attendance</button>
+		</a>
+	</div>
+
+	<a href="{{ url_for('main.logout') }}"><button class="btn btn-info">Logout</button></a>
+
+
+
+{% endblock %}
+
+

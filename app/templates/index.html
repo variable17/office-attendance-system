@@ -1,0 +1,28 @@
+{% extends 'base.html'%}
+
+{% block page_content %}
+
+
+
+
+
+	<div class="align">
+		<a href="{{ url_for('main.check_in') }}">
+			<button type="button" class="btn btn-info btn-lg btn-block">Check In</button>
+		</a>
+		
+		<a href="{{ url_for('main.login') }}">
+			<button type="button" class="btn btn-warning btn-lg btn-block">Manager</button>
+		</a>
+		
+		<a href="{{ url_for('main.login') }}">
+			<button type="button" class="btn btn-danger btn-lg btn-block">Admin</button>
+		</a>
+	</div>
+
+
+
+
+
+
+{% endblock %}
