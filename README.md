@@ -128,14 +128,14 @@ Apart from attendace, admin can create new users too. The implementation is -
 @main.route('/new_user', methods=['GET', 'POST'])
 @is_admin
 def new_user():
-form = RegistrationForm()
-if form.validate_on_submit():
-	user = User(username=form.username.data, password=form.password.data, phone_no=form.phone_no.data, admin=form.admin.data, manager=form.manager.data)
-	db.session.add(user)
-	db.session.commit()
-	flash('New user has been created')
-	return redirect(url_for('.office'))
-return render_template('register.html', form=form)
+	form = RegistrationForm()
+	if form.validate_on_submit():
+		user = User(username=form.username.data, password=form.password.data, phone_no=form.phone_no.data, admin=form.admin.data, manager=form.manager.data)
+		db.session.add(user)
+		db.session.commit()
+		flash('New user has been created')
+		return redirect(url_for('.office'))
+	return render_template('register.html', form=form)
  ```
  
 ## Limitation - 
